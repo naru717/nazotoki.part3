@@ -1,1 +1,599 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>謎解きアプリ第３弾：急変対応のなぞ（TMC）</title>
+<style>
+  :root{
+    --bg:#fff7fb; --card:#ffffff; --text:#1f2937; --muted:#6b7280;
+    --accent:#ff7ac6; --ok:#16a34a; --ng:#ef4444; --ring:#ffd5ec;
+    --gold:#ffcc66; --spark:#fff2a8;
+  }
+  html,body{height:100%}
+  body{
+    margin:0; background:linear-gradient(180deg,#fff7fb 0%, #f5fbff 100%);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,Arial,sans-serif;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .wrap{max-width:900px; margin:0 auto; padding:20px 16px 64px;}
+  header{display:flex; align-items:center; gap:12px; margin:6px 0 10px;}
+  header h1{font-size:26px; margin:0;}
+  .mascot{width:40px; height:40px; border-radius:12px; box-shadow:0 6px 16px rgba(0,0,0,.08);}
+  .card{background:var(--card); border-radius:20px; box-shadow:0 10px 24px rgba(255,122,198,.15);
+        padding:18px; margin:14px 0; border:2px solid var(--ring);}
+  .question{font-size:20px; font-weight:800; margin:8px 0 4px;}
+  .lead{color:var(--muted); margin-top:2px;}
+  .choices{display:grid; gap:10px; margin-top:12px;}
+  .choice-btn{width:100%; text-align:left; padding:14px 16px; border-radius:16px; border:2px solid #e7f2ff; background:#fff; cursor:pointer; font-size:16px;}
+  .choice-btn:hover{border-color:#cfe7ff; background:#f7fbff;}
+  .result{margin-top:10px; font-weight:900; font-size:18px;}
+  .ok{color:var(--ok);} .ng{color:var(--ng);}
+  .subtitle{font-weight:900; color:#1f2937; margin:6px 0 10px; font-size:18px;}
+  .muted-box{background:#fff5fa; border:2px dashed #ffd2ea; padding:10px 12px; border-radius:14px; color:#374151;}
+  .explain{margin-top:12px; text-align:left; background:#f7fbff; border:2px solid #dbeafe; border-radius:14px; padding:12px;}
+  .fade{animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:none}}
+  @media (max-width:560px){
+    header h1{font-size:22px}
+    .question{font-size:18px}
+    .choice-btn{font-size:15px; padding:14px}
+    .btn{width:100%}
+  }
 
+  /* ボタン */
+  .btn{
+    display:inline-block; padding:14px 18px; border-radius:16px; border:none; cursor:pointer; font-size:16px;
+    background:linear-gradient(90deg,var(--accent),#ffa7d8); color:#fff; box-shadow:0 8px 18px rgba(255,122,198,.35);
+  }
+  .btn:disabled{opacity:.6; cursor:not-allowed;}
+  .btn.alt{background:linear-gradient(90deg,#8ec5ff,#b5e1ff);}
+  .btn.ghost{ background:#fff; color:#ff4fae; border:2px solid #ffb4df; box-shadow:none; }
+
+  /* 入力フォーム（縦並び） */
+  .form-vertical{display:flex; flex-direction:column; gap:12px;}
+  label{font-size:14px; color:#6b7280; margin-bottom:6px;}
+  input{
+    width:100%; padding:14px 14px; font-size:16px; border-radius:14px; border:2px solid #ffdff0; background:#fff; outline:none;
+  }
+  input:focus{border-color:#ffb3dc; box-shadow:0 0 0 4px #ffe6f4;}
+
+  /* ヒーロー（紹介） */
+  .hero{
+    display:flex; flex-direction:column; align-items:center; text-align:center; gap:10px;
+  }
+  .hero img{ width:min(68vw, 300px); height:auto; border-radius:24px; box-shadow:0 10px 26px rgba(0,0,0,.12); }
+  .speech{
+    background:#ffffff; border:2px solid #ffd5ec; border-radius:18px; padding:12px 14px; line-height:1.7;
+    position:relative; max-width:680px;
+  }
+  .speech:after{
+    content:""; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+    border:10px solid transparent; border-top-color:#ffd5ec;
+  }
+  .speech:before{
+    content:""; position:absolute; top:calc(100% + 2px); left:50%; transform:translateX(-50%);
+    border:10px solid transparent; border-top-color:#ffffff;
+  }
+
+  /* 正解スタンプ */
+  .stamp{position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(255,255,255,.75); z-index:50;}
+  .stamp img{width:min(70vw,380px); height:auto; filter:drop-shadow(0 10px 24px rgba(0,0,0,.2)); animation:pop .5s ease;}
+  @keyframes pop{0%{transform:scale(.6) rotate(-6deg); opacity:0}60%{transform:scale(1.05) rotate(2deg); opacity:1}100%{transform:scale(1) rotate(0)}}
+
+  /* ===== エンディング豪華版 ===== */
+  #screen-ending{ position:relative; overflow:hidden; }
+  .ending-wrap{ display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center; }
+  .ending-hero{
+    width:min(80vw, 420px); height:auto;
+    border-radius:28px; box-shadow:0 18px 40px rgba(255,122,198,.35);
+    outline:6px solid rgba(255, 213, 236, .6);
+  }
+  .ending-title{
+    font-size:24px; font-weight:900; letter-spacing:.02em;
+    background:linear-gradient(90deg,#ff7ac6,#ffcc66); -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .ending-lines{
+    line-height:1.9; font-size:16px; color:#374151;
+    background:#fffef3; border:2px solid #ffefb6; border-radius:16px; padding:10px 14px;
+  }
+  .ending-badge{
+    display:inline-block; padding:8px 12px; border-radius:999px;
+    background:linear-gradient(90deg,#ffd591,#ffe9b6); color:#6b4000; font-weight:800; font-size:13px;
+    border:1px solid #f6c66f; box-shadow:0 6px 16px rgba(255,204,102,.35);
+  }
+  .ending-actions{ display:flex; gap:10px; margin-top:6px; flex-wrap:wrap; justify-content:center; }
+
+  /* 紙吹雪 */
+  .confetti{ pointer-events:none; position:absolute; inset:0; overflow:hidden; }
+  .confetti span{
+    position:absolute; top:-10px; width:10px; height:16px; opacity:.9;
+    animation:fall 2.8s linear forwards; transform:rotate(0deg);
+  }
+  @keyframes fall{
+    0%{ transform:translateY(-10px) rotate(0deg); }
+    100%{ transform:translateY(120vh) rotate(540deg); }
+  }
+  /* キラキラ */
+  .sparkles{ pointer-events:none; position:absolute; inset:0; }
+  .spark{
+    position:absolute; width:10px; height:10px; background:radial-gradient(circle, var(--spark) 0%, rgba(255,255,255,0) 70%);
+    animation:blink 1.6s ease-in-out infinite;
+  }
+  @keyframes blink{ 0%,100%{opacity:0.2} 50%{opacity:1} }
+
+  /* ===== タロット演出 ===== */
+  .fortune-wrap{
+    display:flex; flex-direction:column; align-items:center; gap:10px; margin-top:10px;
+  }
+  .tarot-hero{
+    width:min(62vw, 260px); height:auto; border-radius:22px;
+    box-shadow:0 12px 24px rgba(0,0,0,.12);
+    outline:4px solid rgba(255,213,236,.6);
+  }
+  .fortune-lines{
+    background:#ffffff; border:2px solid #ffd5ec; border-radius:16px; padding:10px 12px; line-height:1.9;
+    min-height:72px; max-width:680px; text-align:left;
+  }
+  .fortune-line{ opacity:0; transform:translateY(4px); animation:fade .3s ease forwards; }
+
+  .tarot-table{display:flex; gap:10px; justify-content:center; margin-top:12px; flex-wrap:wrap;}
+  .tarot-card{
+    width:96px; height:140px; border-radius:12px;
+    background:linear-gradient(180deg,#fff8fb,#ffe6f4);
+    border:2px solid #ffc9e8; box-shadow:0 6px 16px rgba(255,122,198,.25);
+    display:flex; align-items:center; justify-content:center; font-weight:800; color:#7a2856; position:relative;
+  }
+  .tarot-card .cap{
+    position:absolute; bottom:6px; left:0; right:0; text-align:center; font-size:12px; color:#92415f;
+  }
+  .tarot-card.reversed{ transform:rotate(180deg); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <img src="mame2.png" alt="とせいくん（第3弾）" class="mascot" />
+      <h1>第３弾：急変対応のなぞ（TMC）</h1>
+    </header>
+
+    <!-- 入力画面 -->
+    <section id="screen-intro" class="card fade">
+      <div class="hero">
+        <img src="mame2.png" alt="とせいくん（第3弾）" />
+        <div class="speech">
+          <strong>ぼくは とせいくん。</strong><br>
+          <strong>TMC(とうせいメディカルカップ）のマスコットキャラだよ。</strong><br>
+          まずはあなたのこと<strong>教えて！</strong>
+        </div>
+      </div>
+
+      <div style="height:8px;"></div>
+
+      <div class="form-vertical">
+        <div>
+          <label for="name">名前</label>
+          <input id="name" type="text" placeholder="例）フルネーム" />
+        </div>
+        <div>
+          <label for="group">所属</label>
+          <input id="group" type="text" placeholder="例）外来／〇〇病棟／リハ など" />
+        </div>
+        <div>
+          <label for="job">職種</label>
+          <input id="job" type="text" placeholder="例）看護師／医師／薬剤師 など" />
+        </div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <button class="btn" id="go-pre" onclick="goPre()">次へ</button>
+      </div>
+    </section>
+
+    <!-- タロット占いスタート画面 -->
+    <section id="screen-pre" class="card fade" style="display:none;">
+      <div id="pre-title" class="subtitle"></div>
+      <div class="muted-box" style="margin:10px 0 14px;">
+        🔮 <strong>とせいくんのタロット占い</strong><br/>
+        1枚引いて、今日の「急変対応のヒント」を受け取ろう。<br/>
+        準備はいい？ では占いスタート！
+      </div>
+      <button class="btn alt" id="begin-diag" onclick="beginFortune()">占いをはじめる</button>
+    </section>
+
+    <!-- 占い結果（タロット） -->
+    <section id="screen-diag-result" class="card fade" style="display:none;">
+      <div id="type-title" class="question">とせいくんのタロット占い</div>
+      <div id="type-copy" class="lead"></div>
+
+      <div class="fortune-wrap">
+        <img src="mame2.png" alt="タロットを持つとせいくん" class="tarot-hero" />
+        <div class="tarot-table" id="tarot-table"></div>
+        <div id="fortune-lines" class="fortune-lines"></div>
+      </div>
+
+      <ul id="type-desc" style="text-align:left; line-height:1.8; margin-top:8px;"></ul>
+      <div class="muted-box" style="margin-top:12px;">
+        さあ、<strong>第３弾：急変対応のなぞ</strong>へ！<br/>
+        いまのヒントを活かしてクイズに挑もう。
+      </div>
+      <button class="btn" id="to-quiz" onclick="toQuiz()" style="margin-top:14px;">第1問へ進む</button>
+    </section>
+
+    <!-- 本編Q1〜Q3（急変対応） -->
+    <section id="screen-quiz" class="card fade" style="display:none;">
+      <div id="story" class="lead" style="margin-bottom:8px;"></div>
+      <div style="text-align:center; margin:10px 0;">
+        <img id="quiz-img" src="" alt="謎の画像" style="max-width:100%; border-radius:14px; box-shadow:0 4px 12px rgba(0,0,0,0.1);" />
+      </div>
+      <div id="q-title" class="question"></div>
+      <div id="choices" class="choices"></div>
+      <div id="judge" class="result"></div>
+      <div id="explain" class="explain" style="display:none;"></div>
+      <div id="next-area" style="display:none; margin-top:12px;">
+        <button id="next-btn" class="btn" onclick="goNext()">次へ</button>
+      </div>
+    </section>
+
+    <!-- エンディング -->
+    <section id="screen-ending" class="card fade" style="display:none;">
+      <div class="ending-wrap">
+        <div class="ending-title">🎉 クリアおめでとう！（第３弾）</div>
+        <img src="mame2.png" alt="とせいくん" class="ending-hero" />
+        <div class="ending-lines">
+          <div class="ending-badge">とうせいの謎・名探偵認定</div>
+          <div id="ending-text" style="margin-top:6px;"></div>
+          <div style="margin-top:6px;">
+            TMCのことで聞きたいことがあれば、いつでもPHS6693に連絡してね。
+          </div>
+        </div>
+        <div class="ending-actions">
+          <button class="btn ghost" id="finish-btn">今回の調査を終了する</button>
+        </div>
+        <div id="finish-message" style="display:none; margin-top:10px; font-weight:800; color:#374151;">
+          お疲れ様でした。ありがとうございました。
+        </div>
+      </div>
+      <div class="confetti" id="confetti"></div>
+      <div class="sparkles" id="sparkles"></div>
+    </section>
+  </div>
+
+  <!-- 正解スタンプ -->
+  <div id="stamp" class="stamp" aria-hidden="true">
+    <img src="nazotoki2.png" alt="正解スタンプ" />
+  </div>
+
+  <!-- サウンド -->
+  <audio id="bgm" src="nazotoki2.mp3" preload="none" loop></audio>
+  <audio id="seClick" src="pochi.mp3" preload="auto"></audio>
+  <audio id="seCorrect" src="pinpon.mp3" preload="auto"></audio>
+  <audio id="seClear" src="seikou.mp3" preload="auto"></audio>
+
+<script>
+ /* =========================
+   Googleフォーム 設定（本番）
+   ========================= */
+const GOOGLE_FORM_ACTION = "https://docs.google.com/forms/d/e//formResponse";
+const ENTRY_NAME = "entry.6";  // 名前
+const ENTRY_DEPT = "entry.2";  // 所属
+const ENTRY_JOB  = "entry.6";  // 職種
+
+function sendToGoogleForm({ name, dept, job }) {
+  try {
+    if (!GOOGLE_FORM_ACTION || !ENTRY_NAME || !ENTRY_DEPT || !ENTRY_JOB) return;
+    const fd = new FormData();
+    fd.append(ENTRY_NAME, name || "");
+    fd.append(ENTRY_DEPT, dept || "");
+    fd.append(ENTRY_JOB,  job  || "");
+    fetch(GOOGLE_FORM_ACTION, { method: "POST", body: fd, mode: "no-cors" })
+      .then(function(){ console.log("✅ Googleフォームに送信しました"); })
+      .catch(function(e){ console.warn("⚠️ 送信エラー:", e); });
+  } catch (e) {
+    console.warn("⚠️ 送信例外:", e);
+  }
+}
+
+  // ===== DOM =====
+  const nameEl  = document.getElementById('name');
+  const groupEl = document.getElementById('group');
+  const jobEl   = document.getElementById('job');
+
+  const screenIntro = document.getElementById('screen-intro');
+  const screenPre   = document.getElementById('screen-pre');
+  const screenDiagResult = document.getElementById('screen-diag-result');
+  const screenQuiz  = document.getElementById('screen-quiz');
+  const screenEnding= document.getElementById('screen-ending');
+
+  const preTitle = document.getElementById('pre-title');
+  const stampEl = document.getElementById('stamp');
+
+  const storyEl = document.getElementById('story');
+  const qTitleEl = document.getElementById('q-title');
+  const choicesEl = document.getElementById('choices');
+  const judgeEl = document.getElementById('judge');
+  const explainEl = document.getElementById('explain');
+  const nextArea = document.getElementById('next-area');
+  const nextBtn  = document.getElementById('next-btn');
+  const endingText = document.getElementById('ending-text');
+  const quizImgEl = document.getElementById('quiz-img');
+  const confettiEl = document.getElementById('confetti');
+  const sparklesEl = document.getElementById('sparkles');
+
+  const fortuneLinesEl = document.getElementById('fortune-lines');
+  const finishBtn = document.getElementById('finish-btn');
+  const finishMessage = document.getElementById('finish-message');
+  const tarotTable = document.getElementById('tarot-table');
+
+  // ===== Sound =====
+  const bgm = document.getElementById('bgm');
+  const seClick = document.getElementById('seClick');
+  const seCorrect = document.getElementById('seCorrect');
+  const seClear = document.getElementById('seClear');
+  let bgmStarted = false;
+
+  function playClick(){ try{ seClick.currentTime = 0; seClick.play(); }catch(e){} }
+  function playCorrect(){ try{ seCorrect.currentTime = 0; seCorrect.play(); }catch(e){} }
+  function ensureBGM(){
+    if(!bgmStarted){
+      bgmStarted = true;
+      try{ bgm.volume = 0.8; bgm.play(); }catch(e){}
+    }
+  }
+  function stopAllSounds(){
+    try{ bgm.pause(); bgm.currentTime = 0; }catch(e){}
+    try{ seClick.pause(); seClick.currentTime = 0; }catch(e){}
+    try{ seCorrect.pause(); seCorrect.currentTime = 0; }catch(e){}
+    try{ seClear.pause(); seClear.currentTime = 0; }catch(e){}
+    bgmStarted = false;
+  }
+
+  // すべてのボタンでクリック音（選択肢は除外）
+  document.addEventListener('click', function(e){
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    if (btn.classList.contains('choice-btn')) return;
+    playClick();
+  }, true);
+
+  // 画面切替
+  function hideAll(){ [screenIntro,screenPre,screenDiagResult,screenQuiz,screenEnding].forEach(function(el){ el.style.display='none'; }); }
+  function show(el){ hideAll(); el.style.display='block'; window.scrollTo({top:0, behavior:'smooth'}); }
+  show(screenIntro);
+
+  // ====== Safari対策：onclick直付け用の公開関数 ======
+  window.goPre = function(){
+    if(!nameEl.value.trim()){ nameEl.focus(); nameEl.style.borderColor='#ff8dc7'; return; }
+    nameEl.style.borderColor='#ffdff0';
+    preTitle.textContent = "第３弾『急変対応のなぞ』へようこそ、 " + nameEl.value + " さん。最初はぼくのタロット占いで今日のヒントを引いてみよう！";
+    show(screenPre);
+    sendToGoogleForm({ name: nameEl.value, dept: groupEl.value, job: jobEl.value });
+  };
+
+  // ===== タロット占いデータ =====
+  const tarotDeck = [
+    { key:"THE_SUN",      title:"太陽",        upright:["成功・活力・チームの一体感","明るく共有して推進すると吉"], reversed:["空回り・独善に注意","皆の理解を合わせてから進めよう"], tips:["小さな勝ちを讃えよう","成果を見える化してモチベUP"]},
+    { key:"THE_STAR",     title:"星",          upright:["希望・ビジョン・信頼","遠くの目標を皆で見て進もう"], reversed:["理想先行・足元の整備不足","現実的な手順を再確認"], tips:["ゴール像を1枚の図で共有","今日やる3つを明確に"]},
+    { key:"THE_HERMIT",   title:"隠者",        upright:["内省・知恵・落ち着いた判断","静かに事実を整える時"], reversed:["孤立・抱え込みすぎ","声かけ・相談で早めの連携を"], tips:["一次情報の整理→共有","不明点は“保留”タスク化"]},
+    { key:"JUSTICE",      title:"正義",        upright:["公平・バランス・説明責任","安全と妥当性を最優先"], reversed:["偏り・早合点に注意","根拠の提示と再確認を"], tips:["判断基準を最初に合意","“安全側に倒す”合図を決める"]},
+    { key:"THE_MAGICIAN", title:"魔術師",      upright:["開始・工夫・コミュ力","手持ち資源で最善を作る"], reversed:["準備不足・独走","役割宣言とフォロー体制を"], tips:["役割カードを見える化","5分の段取りMTGを導入"]},
+    { key:"STRENGTH",     title:"力",          upright:["信頼・粘り強さ・優しさ","落ち着いた声かけが効く"], reversed:["感情的・過剰な力技","聴く→伝える→合意の順で"], tips:["メンバーの強みを言語化","困り事を拾う“耳役”を置く"]},
+    { key:"TEMPERANCE",   title:"節制",        upright:["調整・統合・ほどよさ","多職種の知恵を混ぜると吉"], reversed:["過不足・情報の断絶","過剰/不足を日次で調整"], tips:["要点ノートで共通認識","引き継ぎテンプレを固定化"]},
+    { key:"THE_WORLD",    title:"世界",        upright:["達成・全体最適・完成","チームで輪をつくると最強"], reversed:["未完・詰まりの放置","最後のチェックリストで完了"], tips:["完了基準を決める","終了後のふりかえり実施"]}
+  ];
+
+  function drawTarot(){
+    const idx = Math.floor(Math.random()*tarotDeck.length);
+    const up  = Math.random() < 0.7; // 正位置7割
+    const card = tarotDeck[idx];
+    return { card, upright: up };
+  }
+
+  function renderFortune(lines){
+    fortuneLinesEl.innerHTML = "";
+    let i = 0;
+    (function next(){
+      if(i >= lines.length) return;
+      const div = document.createElement('div');
+      div.className = 'fortune-line';
+      div.textContent = lines[i++];
+      fortuneLinesEl.appendChild(div);
+      setTimeout(next, 900);
+    })();
+  }
+
+  window.beginFortune = function(){
+    ensureBGM();
+    const result = drawTarot();
+    tarotTable.innerHTML = "";
+    const cardEl = document.createElement('div');
+    cardEl.className = 'tarot-card' + (result.upright ? '' : ' reversed');
+    cardEl.innerHTML = '<div style="font-size:32px;">🔮</div><div class="cap">'+ result.card.title + (result.upright? "（正位置）":"（逆位置）") +'</div>';
+    tarotTable.appendChild(cardEl);
+
+    const lines = [
+      "とせいくんがタロットをシャッフル……",
+      "出たのは………… 「" + result.card.title + "」！",
+      result.upright ? "今日は正位置。良い流れを活かそう！" : "今日は逆位置。落ち着いて整えると好転するよ。",
+      ...(result.upright ? result.card.upright : result.card.reversed)
+    ];
+    document.getElementById('type-copy').textContent = "今日のキーワード： " + (result.upright ? "前向きな流れ" : "足元の整え直し");
+
+    const ul = document.getElementById('type-desc');
+    ul.innerHTML = "";
+    result.card.tips.forEach(function(t){
+      const li = document.createElement('li'); li.textContent = "🔸 " + t; ul.appendChild(li);
+    });
+
+    show(screenDiagResult);
+    setTimeout(function(){ renderFortune(lines); }, 80);
+  };
+
+  // ====== クイズ（急変対応：3問） ======
+  const quiz = [
+    {
+      story: "📍状況：とせいくんが病院の中を歩いていると、目の前で患者さんの具合が悪くなりました。",
+      title: "謎1：さて、とせいくんはまず最初に何を観察したらいいでしょうか？",
+      choices: [
+        {label:"1）血圧", correct:false},
+        {label:"2）体温", correct:false},
+        {label:"3）呼吸", correct:true}
+      ],
+      explain: [
+        "脳や心臓に異常がみられると、正常な呼吸を保てなくなることがあります。命に関わる可能性があるため、まず“呼吸”を観察します。",
+        "正常な呼吸は成人で 16〜20 回/分の目安。10秒数えても呼吸が見られない場合は、すぐに応援を呼びましょう。",
+        "（この後、意識がなくなり脈も触れない → 大声で応援・ドクターコール・AED・救急カートを要請）"
+      ]
+    },
+    {
+      story: "🆘 とせいくんは応援を呼ぶことにしました。",
+      title: "謎2：要請する“ドクターコール”の番号は何番でしょう？",
+      choices: [
+        {label:"1）5151：患者支援センター説明室", correct:false},
+        {label:"2）6693：認定看護師のPHS", correct:false},
+        {label:"3）7171：救命救急センター受付", correct:true},
+        {label:"4）7711：7E病棟", correct:false}
+      ],
+      explain: [
+        "正解は 7171（救命救急センター受付）。至急連絡・支援要請の番号を覚えておこう！",
+        "ちなみに、院内のAEDは 25 台あります。AED到着までは胸骨圧迫（心臓マッサージ）を継続します。"
+      ]
+    },
+    {
+      story: "🚑 AEDが到着するまで、とせいくんは胸骨圧迫を行います。",
+      title: "謎3：胸骨圧迫（心臓マッサージ）は1分間にどのくらいの回数で行うのが正しい？",
+      choices: [
+        {label:"1）90〜100 回/分", correct:false},
+        {label:"2）100〜120 回/分", correct:true},
+        {label:"3）120〜140 回/分", correct:false}
+      ],
+      explain: [
+        "胸骨圧迫は一定のリズムで絶え間なく。胸部の真ん中に両手を置き、5〜6cmの深さで圧迫し、胸がしっかり戻るのを確認します。",
+        "目安になる曲：『アンパンマンマーチ』『ドラえもんのうた』『うさぎとかめ』などは 100 拍/分 程度で参考になります。",
+        "困った時は急性・重症患者看護専門看護師や救急看護認定看護師、集中ケア認定看護師に相談しよう。院内研修のICLSも定期的に受講が大切だね。"
+      ]
+    }
+  ];
+  let quizIndex = 0;
+  const quizImages = []; // 必要なら ["q1.png","q2.png","q3.png"] のように追加
+
+  // ===== 画面・進行 =====
+  window.toQuiz = function(){
+    quizIndex = 0;
+    renderQuiz();
+    show(screenQuiz);
+  };
+
+  function renderQuiz(){
+    const q = quiz[quizIndex];
+    storyEl.innerHTML = q.story;
+    quizImgEl.src = quizImages[quizIndex] || "";
+    quizImgEl.alt = "第" + (quizIndex+1) + "問のイラスト";
+
+    qTitleEl.textContent = q.title;
+    choicesEl.innerHTML = ""; judgeEl.textContent = "";
+    explainEl.style.display = "none"; explainEl.innerHTML = "";
+    nextArea.style.display = "none";
+
+    q.choices.forEach(function(c){
+      const b = document.createElement('button');
+      b.className = 'choice-btn';
+      b.textContent = c.label;
+      b.onclick = function(){ judge(c.correct); };
+      choicesEl.appendChild(b);
+    });
+  }
+
+  function showStamp(){
+    stampEl.style.display = 'flex';
+    setTimeout(function(){ stampEl.style.display = 'none'; }, 700);
+  }
+
+  function judge(isCorrect){
+    if(isCorrect){
+      judgeEl.textContent = "正解！";
+      judgeEl.className = "result ok";
+
+      try{ seClick.pause(); seClick.currentTime = 0; }catch(e){}
+      try{
+        seCorrect.currentTime = 0;
+        setTimeout(function(){ try{ seCorrect.play(); }catch(e){} }, 30);
+      }catch(e){}
+
+      showStamp();
+
+      const q = quiz[quizIndex];
+      explainEl.innerHTML = "<strong>解説</strong><ul style='margin:6px 0 0; padding-left:18px;'>" +
+        q.explain.map(function(t){ return "<li>"+ t +"</li>"; }).join("") + "</ul>";
+      explainEl.style.display = "block";
+      nextArea.style.display = "block";
+
+    }else{
+      judgeEl.textContent = "残念！もう一度選んでみよう。";
+      judgeEl.className = "result ng";
+    }
+  }
+
+  window.goNext = function(){
+    quizIndex++;
+    if(quizIndex < quiz.length){
+      renderQuiz();
+      window.scrollTo({top:0, behavior:'smooth'});
+    }else{
+      const nm = (nameEl.value || "名探偵").trim();
+      endingText.innerHTML = "<strong>"+ nm +"さん、ありがとう！</strong><br>急変時は“呼吸の観察→応援→ドクターコール（7171）→胸骨圧迫100〜120回/分”を意識していこう。";
+      show(screenEnding);
+      launchConfetti();
+      launchSparkles();
+      try{ seClear.currentTime = 0; seClear.play(); }catch(e){}
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+  };
+
+  // 紙吹雪＆キラキラ
+  function launchConfetti(){
+    confettiEl.innerHTML = "";
+    const colors = ["#ff7ac6","#ffd166","#7bdff2","#c3f0ca","#b5b0ff"];
+    for(let i=0;i<40;i++){
+      const s = document.createElement('span');
+      const size = 8 + Math.random()*10;
+      s.style.width = size + "px";
+      s.style.height = (size*1.6) + "px";
+      s.style.left = (Math.random()*100) + "%";
+      s.style.background = colors[Math.floor(Math.random()*colors.length)];
+      s.style.animationDelay = (Math.random()*0.8) + "s";
+      s.style.opacity = 0.8 + Math.random()*0.2;
+      confettiEl.appendChild(s);
+    }
+  }
+  function launchSparkles(){
+    sparklesEl.innerHTML = "";
+    for(let i=0;i<18;i++){
+      const sp = document.createElement('div');
+      sp.className = 'spark';
+      sp.style.left = (Math.random()*100) + "%";
+      sp.style.top  = (Math.random()*100) + "%";
+      sp.style.animationDelay = (Math.random()*1.2) + "s";
+      sparklesEl.appendChild(sp);
+    }
+  }
+
+  // 終了ボタン
+  finishBtn.addEventListener('click', function(){
+    stopAllSounds();
+    finishMessage.style.display = 'block';
+    finishBtn.disabled = true;
+    finishBtn.textContent = '終了しました';
+  });
+
+  // BGM開始はユーザー操作後に（iOS対策）
+  document.getElementById('begin-diag').addEventListener('click', function(){
+    if(!bgmStarted){
+      bgmStarted = true;
+      try{ bgm.volume = 0.8; bgm.play(); }catch(e){}
+    }
+  });
+</script>
+</body>
+</html>
