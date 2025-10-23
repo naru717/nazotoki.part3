@@ -196,10 +196,10 @@
       <div id="pre-title" class="subtitle"></div>
       <div class="muted-box" style="margin:10px 0 14px;">
         🔮 <strong>とせいくんのタロット占い</strong><br/>
-        1枚引いて、今日の「急変対応のヒント」を受け取ろう。<br/>
+        1枚引いて、今日の「あなたの運勢」を受け取ろう。<br/>
         準備はいい？ では占いスタート！
       </div>
-      <button class="btn alt" id="begin-diag" onclick="beginFortune()">占いをはじめる</button>
+      <button class="btn alt" id="begin-diag" onclick="beginFortune()">カードを１枚引く</button>
     </section>
 
     <!-- 占い結果（タロット） -->
@@ -216,7 +216,7 @@
       <ul id="type-desc" style="text-align:left; line-height:1.8; margin-top:8px;"></ul>
       <div class="muted-box" style="margin-top:12px;">
         さあ、<strong>第３弾：急変対応のなぞ</strong>へ！<br/>
-        いまのヒントを活かしてクイズに挑もう。
+        あなたの力なら解けるはず！！クイズに挑もう。
       </div>
       <button class="btn" id="to-quiz" onclick="toQuiz()" style="margin-top:14px;">第1問へ進む</button>
     </section>
@@ -366,7 +366,7 @@ function sendToGoogleForm({ name, dept, job }) {
   window.goPre = function(){
     if(!nameEl.value.trim()){ nameEl.focus(); nameEl.style.borderColor='#ff8dc7'; return; }
     nameEl.style.borderColor='#ffdff0';
-    preTitle.textContent = "第３弾『急変対応のなぞ』へようこそ、 " + nameEl.value + " さん。最初はぼくのタロット占いで今日のヒントを引いてみよう！";
+    preTitle.textContent = "第３弾『急変対応のなぞ』へようこそ、 " + nameEl.value + " さん。最初はぼくのタロット占いで今日運勢を引いてみよう！";
     show(screenPre);
     sendToGoogleForm({ name: nameEl.value, dept: groupEl.value, job: jobEl.value });
   };
