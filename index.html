@@ -149,6 +149,13 @@
     position:absolute; bottom:6px; left:0; right:0; text-align:center; font-size:12px; color:#92415f;
   }
   .tarot-card.reversed{ transform:rotate(180deg); }
+
+  /* 🆕 タロットアドバイス見出し（追加） */
+  .advice-title{
+    font-weight:800; color:#7a2856; margin-top:14px; font-size:17px; text-align:left;
+    background:#fff5fa; border-left:5px solid #ffb8e0; padding:8px 10px; border-radius:10px;
+    animation:fade .6s ease;
+  }
 </style>
 </head>
 <body>
@@ -213,7 +220,14 @@
         <div id="fortune-lines" class="fortune-lines"></div>
       </div>
 
+      <!-- 🆕 ここから：アドバイス見出し（明確化） -->
+      <div id="advice-title" class="advice-title" style="display:none;">
+        🔮 タロット占いから出たアドバイス
+      </div>
+      <!-- 元のアドバイスリスト（そのまま） -->
       <ul id="type-desc" style="text-align:left; line-height:1.8; margin-top:8px;"></ul>
+      <!-- 🆕 ここまで追加 -->
+
       <div class="muted-box" style="margin-top:12px;">
         さあ、<strong>第３弾：急変対応のなぞ</strong>へ！<br/>
         あなたの力なら解けるはず！！クイズに挑もう。
@@ -403,6 +417,12 @@ function sendToGoogleForm({ name, dept, job }) {
     })();
   }
 
+  /* 🆕 追加：アドバイスタイトルの表示制御 */
+  function showAdviceTitle(){
+    const at = document.getElementById('advice-title');
+    if(at){ at.style.display = 'block'; }
+  }
+
   window.beginFortune = function(){
     ensureBGM();
     const result = drawTarot();
@@ -423,8 +443,11 @@ function sendToGoogleForm({ name, dept, job }) {
     const ul = document.getElementById('type-desc');
     ul.innerHTML = "";
     result.card.tips.forEach(function(t){
-      const li = document.createElement('li'); li.textContent = "🔸 " + t; ul.appendChild(li);
+      const li=document.createElement('li'); li.textContent = "🔸 " + t; ul.appendChild(li);
     });
+
+    /* 🆕 ここで“タロット占いから出たアドバイス”の見出しを表示 */
+    showAdviceTitle();
 
     show(screenDiagResult);
     setTimeout(function(){ renderFortune(lines); }, 80);
