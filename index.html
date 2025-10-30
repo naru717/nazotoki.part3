@@ -199,21 +199,20 @@
     </section>
 
     <!-- タロット占いスタート画面（2ページ目） -->
-    <section id="screen-pre" class="card fade" style="display:none;">
-      <div id="pre-title" class="subtitle"></div>
+   <section id="fortune-hero" class="fade">
+  <div style="text-align:center; margin:10px 0;">
+    <img src="./toseiuranai.png" alt="タロット占いをする とせいくん" class="tarot-hero" />
+  </div>
 
-      <!-- ★ 追加：とせい占いの画像を表示 -->
-      <div style="text-align:center; margin:10px 0;">
-        <<img src="../toseiuranai.png"> alt="タロット占いをする とせいくん" class="tarot-hero" />
-      </div>
+  <div class="muted_box" style="margin:10px 0 14px;">
+    <strong>とせいくんのタロット占い</strong><br>
+    1枚引いて、今日の「あなたの運勢」を受け取ろう。<br>
+    準備はいい？ では占いスタート！
+  </div>
 
-      <div class="muted-box" style="margin:10px 0 14px;">
-        🔮 <strong>とせいくんのタロット占い</strong><br/>
-        1枚引いて、今日の「あなたの運勢」を受け取ろう。<br/>
-        準備はいい？ では占いスタート！
-      </div>
-      <button class="btn alt" id="begin-diag" onclick="beginFortune()">カードを１枚引く</button>
-    </section>
+  <button class="btn alt" id="begin-diag" onclick="beginFortune()">カードを1枚引く</button>
+</section>
+
 
     <!-- 占い結果（タロット） -->
     <section id="screen-diag-result" class="card fade" style="display:none;">
