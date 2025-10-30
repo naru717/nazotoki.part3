@@ -42,7 +42,6 @@
     .btn{width:100%}
   }
 
-  /* ボタン */
   .btn{
     display:inline-block; padding:14px 18px; border-radius:16px; border:none; cursor:pointer; font-size:16px;
     background:linear-gradient(90deg,var(--accent),#ffa7d8); color:#fff; box-shadow:0 8px 18px rgba(255,122,198,.35);
@@ -51,7 +50,6 @@
   .btn.alt{background:linear-gradient(90deg,#8ec5ff,#b5e1ff);}
   .btn.ghost{ background:#fff; color:#ff4fae; border:2px solid #ffb4df; box-shadow:none; }
 
-  /* 入力フォーム（縦並び） */
   .form-vertical{display:flex; flex-direction:column; gap:12px;}
   label{font-size:14px; color:#6b7280; margin-bottom:6px;}
   input{
@@ -59,7 +57,6 @@
   }
   input:focus{border-color:#ffb3dc; box-shadow:0 0 0 4px #ffe6f4;}
 
-  /* ヒーロー（紹介） */
   .hero{
     display:flex; flex-direction:column; align-items:center; text-align:center; gap:10px;
   }
@@ -77,12 +74,10 @@
     border:10px solid transparent; border-top-color:#ffffff;
   }
 
-  /* 正解スタンプ */
   .stamp{position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(255,255,255,.75); z-index:50;}
   .stamp img{width:min(70vw,380px); height:auto; filter:drop-shadow(0 10px 24px rgba(0,0,0,.2)); animation:pop .5s ease;}
   @keyframes pop{0%{transform:scale(.6) rotate(-6deg); opacity:0}60%{transform:scale(1.05) rotate(2deg); opacity:1}100%{transform:scale(1) rotate(0)}}
 
-  /* ===== エンディング豪華版 ===== */
   #screen-ending{ position:relative; overflow:hidden; }
   .ending-wrap{ display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center; }
   .ending-hero{
@@ -105,7 +100,6 @@
   }
   .ending-actions{ display:flex; gap:10px; margin-top:6px; flex-wrap:wrap; justify-content:center; }
 
-  /* 紙吹雪 */
   .confetti{ pointer-events:none; position:absolute; inset:0; overflow:hidden; }
   .confetti span{
     position:absolute; top:-10px; width:10px; height:16px; opacity:.9;
@@ -115,7 +109,7 @@
     0%{ transform:translateY(-10px) rotate(0deg); }
     100%{ transform:translateY(120vh) rotate(540deg); }
   }
-  /* キラキラ */
+
   .sparkles{ pointer-events:none; position:absolute; inset:0; }
   .spark{
     position:absolute; width:10px; height:10px; background:radial-gradient(circle, var(--spark) 0%, rgba(255,255,255,0) 70%);
@@ -123,7 +117,6 @@
   }
   @keyframes blink{ 0%,100%{opacity:0.2} 50%{opacity:1} }
 
-  /* ===== タロット演出 ===== */
   .fortune-wrap{
     display:flex; flex-direction:column; align-items:center; gap:10px; margin-top:10px;
   }
@@ -150,7 +143,6 @@
   }
   .tarot-card.reversed{ transform:rotate(180deg); }
 
-  /* 🆕 タロットアドバイス見出し（追加） */
   .advice-title{
     font-weight:800; color:#7a2856; margin-top:14px; font-size:17px; text-align:left;
     background:#fff5fa; border-left:5px solid #ffb8e0; padding:8px 10px; border-radius:10px;
@@ -165,7 +157,6 @@
       <h1>第３弾：急変対応のなぞ（TMC）</h1>
     </header>
 
-    <!-- 入力画面 -->
     <section id="screen-intro" class="card fade">
       <div class="hero">
         <img src="mame2.png" alt="とせいくん（第3弾）" />
@@ -198,7 +189,6 @@
       </div>
     </section>
 
-    <!-- タロット占いスタート画面 -->
     <section id="screen-pre" class="card fade" style="display:none;">
       <div id="pre-title" class="subtitle"></div>
       <div class="muted-box" style="margin:10px 0 14px;">
@@ -209,24 +199,23 @@
       <button class="btn alt" id="begin-diag" onclick="beginFortune()">カードを１枚引く</button>
     </section>
 
-    <!-- 占い結果（タロット） -->
+    <!-- ★★ ここを変更：toseiuranai.png を使用 ★★ -->
     <section id="screen-diag-result" class="card fade" style="display:none;">
       <div id="type-title" class="question">とせいくんのタロット占い</div>
       <div id="type-copy" class="lead"></div>
 
       <div class="fortune-wrap">
-        <img src="mame2.png" alt="タロットを持つとせいくん" class="tarot-hero" />
+        <!-- ✅ 修正：画像差し替え -->
+        <img src="toseiuranai.png" alt="タロットをする とせいくん" class="tarot-hero" />
+
         <div class="tarot-table" id="tarot-table"></div>
         <div id="fortune-lines" class="fortune-lines"></div>
       </div>
 
-      <!-- 🆕 ここから：アドバイス見出し（明確化） -->
       <div id="advice-title" class="advice-title" style="display:none;">
         🔮 タロット占いから出たアドバイス
       </div>
-      <!-- 元のアドバイスリスト（そのまま） -->
       <ul id="type-desc" style="text-align:left; line-height:1.8; margin-top:8px;"></ul>
-      <!-- 🆕 ここまで追加 -->
 
       <div class="muted-box" style="margin-top:12px;">
         さあ、<strong>第３弾：急変対応のなぞ</strong>へ！<br/>
@@ -235,7 +224,6 @@
       <button class="btn" id="to-quiz" onclick="toQuiz()" style="margin-top:14px;">第1問へ進む</button>
     </section>
 
-    <!-- 本編Q1〜Q3（急変対応） -->
     <section id="screen-quiz" class="card fade" style="display:none;">
       <div id="story" class="lead" style="margin-bottom:8px;"></div>
       <div style="text-align:center; margin:10px 0;">
@@ -250,7 +238,6 @@
       </div>
     </section>
 
-    <!-- エンディング -->
     <section id="screen-ending" class="card fade" style="display:none;">
       <div class="ending-wrap">
         <div class="ending-title">🎉 クリアおめでとう！（第３弾）</div>
@@ -274,25 +261,20 @@
     </section>
   </div>
 
-  <!-- 正解スタンプ -->
   <div id="stamp" class="stamp" aria-hidden="true">
     <img src="nazotoki2.png" alt="正解スタンプ" />
   </div>
 
-  <!-- サウンド -->
   <audio id="bgm" src="nazotoki2.mp3" preload="none" loop></audio>
   <audio id="seClick" src="pochi.mp3" preload="auto"></audio>
   <audio id="seCorrect" src="pinpon.mp3" preload="auto"></audio>
   <audio id="seClear" src="seikou.mp3" preload="auto"></audio>
 
 <script>
- /* =========================
-   Googleフォーム 設定（本番）
-   ========================= */
 const GOOGLE_FORM_ACTION = "https://docs.google.com/forms/d/e//formResponse";
-const ENTRY_NAME = "entry.6";  // 名前
-const ENTRY_DEPT = "entry.2";  // 所属
-const ENTRY_JOB  = "entry.6";  // 職種
+const ENTRY_NAME = "entry.6";
+const ENTRY_DEPT = "entry.2";
+const ENTRY_JOB  = "entry.6";
 
 function sendToGoogleForm({ name, dept, job }) {
   try {
@@ -301,92 +283,81 @@ function sendToGoogleForm({ name, dept, job }) {
     fd.append(ENTRY_NAME, name || "");
     fd.append(ENTRY_DEPT, dept || "");
     fd.append(ENTRY_JOB,  job  || "");
-    fetch(GOOGLE_FORM_ACTION, { method: "POST", body: fd, mode: "no-cors" })
-      .then(function(){ console.log("✅ Googleフォームに送信しました"); })
-      .catch(function(e){ console.warn("⚠️ 送信エラー:", e); });
-  } catch (e) {
-    console.warn("⚠️ 送信例外:", e);
-  }
+    fetch(GOOGLE_FORM_ACTION, { method: "POST", body: fd, mode: "no-cors" });
+  } catch (e) {}
 }
 
-  // ===== DOM =====
-  const nameEl  = document.getElementById('name');
-  const groupEl = document.getElementById('group');
-  const jobEl   = document.getElementById('job');
+const nameEl  = document.getElementById('name');
+const groupEl = document.getElementById('group');
+const jobEl   = document.getElementById('job');
 
-  const screenIntro = document.getElementById('screen-intro');
-  const screenPre   = document.getElementById('screen-pre');
-  const screenDiagResult = document.getElementById('screen-diag-result');
-  const screenQuiz  = document.getElementById('screen-quiz');
-  const screenEnding= document.getElementById('screen-ending');
+const screenIntro = document.getElementById('screen-intro');
+const screenPre   = document.getElementById('screen-pre');
+const screenDiagResult = document.getElementById('screen-diag-result');
+const screenQuiz  = document.getElementById('screen-quiz');
+const screenEnding= document.getElementById('screen-ending');
 
-  const preTitle = document.getElementById('pre-title');
-  const stampEl = document.getElementById('stamp');
+const preTitle = document.getElementById('pre-title');
+const stampEl = document.getElementById('stamp');
 
-  const storyEl = document.getElementById('story');
-  const qTitleEl = document.getElementById('q-title');
-  const choicesEl = document.getElementById('choices');
-  const judgeEl = document.getElementById('judge');
-  const explainEl = document.getElementById('explain');
-  const nextArea = document.getElementById('next-area');
-  const nextBtn  = document.getElementById('next-btn');
-  const endingText = document.getElementById('ending-text');
-  const quizImgEl = document.getElementById('quiz-img');
-  const confettiEl = document.getElementById('confetti');
-  const sparklesEl = document.getElementById('sparkles');
+const storyEl = document.getElementById('story');
+const qTitleEl = document.getElementById('q-title');
+const choicesEl = document.getElementById('choices');
+const judgeEl = document.getElementById('judge');
+const explainEl = document.getElementById('explain');
+const nextArea = document.getElementById('next-area');
+const nextBtn  = document.getElementById('next-btn');
+const endingText = document.getElementById('ending-text');
+const quizImgEl = document.getElementById('quiz-img');
+const confettiEl = document.getElementById('confetti');
+const sparklesEl = document.getElementById('sparkles');
 
-  const fortuneLinesEl = document.getElementById('fortune-lines');
-  const finishBtn = document.getElementById('finish-btn');
-  const finishMessage = document.getElementById('finish-message');
-  const tarotTable = document.getElementById('tarot-table');
+const fortuneLinesEl = document.getElementById('fortune-lines');
+const finishBtn = document.getElementById('finish-btn');
+const tarotTable = document.getElementById('tarot-table');
 
-  // ===== Sound =====
-  const bgm = document.getElementById('bgm');
-  const seClick = document.getElementById('seClick');
-  const seCorrect = document.getElementById('seCorrect');
-  const seClear = document.getElementById('seClear');
-  let bgmStarted = false;
+const bgm = document.getElementById('bgm');
+const seClick = document.getElementById('seClick');
+const seCorrect = document.getElementById('seCorrect');
+const seClear = document.getElementById('seClear');
+let bgmStarted = false;
 
-  function playClick(){ try{ seClick.currentTime = 0; seClick.play(); }catch(e){} }
-  function playCorrect(){ try{ seCorrect.currentTime = 0; seCorrect.play(); }catch(e){} }
-  function ensureBGM(){
-    if(!bgmStarted){
-      bgmStarted = true;
-      try{ bgm.volume = 0.8; bgm.play(); }catch(e){}
-    }
+function playClick(){ try{ seClick.currentTime = 0; seClick.play(); }catch(e){} }
+function playCorrect(){ try{ seCorrect.currentTime = 0; seCorrect.play(); }catch(e){} }
+function ensureBGM(){
+  if(!bgmStarted){
+    bgmStarted = true;
+    try{ bgm.volume = 0.8; bgm.play(); }catch(e){}
   }
-  function stopAllSounds(){
-    try{ bgm.pause(); bgm.currentTime = 0; }catch(e){}
-    try{ seClick.pause(); seClick.currentTime = 0; }catch(e){}
-    try{ seCorrect.pause(); seCorrect.currentTime = 0; }catch(e){}
-    try{ seClear.pause(); seClear.currentTime = 0; }catch(e){}
-    bgmStarted = false;
-  }
+}
+function stopAllSounds(){
+  try{ bgm.pause(); bgm.currentTime = 0; }catch(e){}
+  try{ seClick.pause(); seClick.currentTime = 0; }catch(e){}
+  try{ seCorrect.pause(); seCorrect.currentTime = 0; }catch(e){}
+  try{ seClear.pause(); seClear.currentTime = 0; }catch(e){}
+  bgmStarted = false;
+}
 
-  // すべてのボタンでクリック音（選択肢は除外）
-  document.addEventListener('click', function(e){
-    const btn = e.target.closest('button');
-    if (!btn) return;
-    if (btn.classList.contains('choice-btn')) return;
-    playClick();
-  }, true);
+document.addEventListener('click', function(e){
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  if (btn.classList.contains('choice-btn')) return;
+  playClick();
+}, true);
 
-  // 画面切替
-  function hideAll(){ [screenIntro,screenPre,screenDiagResult,screenQuiz,screenEnding].forEach(function(el){ el.style.display='none'; }); }
-  function show(el){ hideAll(); el.style.display='block'; window.scrollTo({top:0, behavior:'smooth'}); }
-  show(screenIntro);
+function hideAll(){ [screenIntro,screenPre,screenDiagResult,screenQuiz,screenEnding].forEach(el=>{el.style.display='none';}); }
+function show(el){ hideAll(); el.style.display='block'; window.scrollTo({top:0, behavior:'smooth'}); }
+show(screenIntro);
 
-  // ====== Safari対策：onclick直付け用の公開関数 ======
-  window.goPre = function(){
-    if(!nameEl.value.trim()){ nameEl.focus(); nameEl.style.borderColor='#ff8dc7'; return; }
-    nameEl.style.borderColor='#ffdff0';
-    preTitle.textContent = "第３弾『急変対応のなぞ』へようこそ、 " + nameEl.value + " さん。最初はぼくのタロット占いで今日運勢を引いてみよう！";
-    show(screenPre);
-    sendToGoogleForm({ name: nameEl.value, dept: groupEl.value, job: jobEl.value });
-  };
+window.goPre = function(){
+  if(!nameEl.value.trim()){ nameEl.focus(); nameEl.style.borderColor='#ff8dc7'; return; }
+  nameEl.style.borderColor='#ffdff0';
+  preTitle.textContent = "第３弾『急変対応のなぞ』へようこそ、 " + nameEl.value + " さん。最初はぼくのタロット占いで今日運勢を引いてみよう！";
+  show(screenPre);
+  sendToGoogleForm({ name: nameEl.value, dept: groupEl.value, job: jobEl.value });
+};
 
-  // ===== タロット占いデータ =====
- const tarotDeck = [
+const tarotDeck = [
   { key:"THE_SUN", title:"太陽",
     upright:["笑顔がみんなを照らす日！","小さな『できた！』を喜ぼう"],
     reversed:["少しお疲れモード☁️","無理せず好きなことをしてリフレッシュ"],
@@ -421,227 +392,219 @@ function sendToGoogleForm({ name, dept, job }) {
     tips:["最後まで笑顔でGO！","写真を撮って記念に残そう📸"] }
 ];
 
+function drawTarot(){
+  const idx = Math.floor(Math.random()*tarotDeck.length);
+  const up  = Math.random() < 0.7;
+  const card = tarotDeck[idx];
+  return { card, upright: up };
+}
 
-  function drawTarot(){
-    const idx = Math.floor(Math.random()*tarotDeck.length);
-    const up  = Math.random() < 0.7; // 正位置7割
-    const card = tarotDeck[idx];
-    return { card, upright: up };
-  }
+function renderFortune(lines){
+  fortuneLinesEl.innerHTML = "";
+  let i = 0;
+  (function next(){
+    if(i >= lines.length) return;
+    const div = document.createElement('div');
+    div.className = 'fortune-line';
+    div.textContent = lines[i++];
+    fortuneLinesEl.appendChild(div);
+    setTimeout(next, 900);
+  })();
+}
 
-  function renderFortune(lines){
-    fortuneLinesEl.innerHTML = "";
-    let i = 0;
-    (function next(){
-      if(i >= lines.length) return;
-      const div = document.createElement('div');
-      div.className = 'fortune-line';
-      div.textContent = lines[i++];
-      fortuneLinesEl.appendChild(div);
-      setTimeout(next, 900);
-    })();
-  }
+function showAdviceTitle(){
+  const at = document.getElementById('advice-title');
+  if(at){ at.style.display = 'block'; }
+}
 
-  /* 🆕 追加：アドバイスタイトルの表示制御 */
-  function showAdviceTitle(){
-    const at = document.getElementById('advice-title');
-    if(at){ at.style.display = 'block'; }
-  }
+window.beginFortune = function(){
+  ensureBGM();
+  const result = drawTarot();
+  tarotTable.innerHTML = "";
+  const cardEl = document.createElement('div');
+  cardEl.className = 'tarot-card' + (result.upright ? '' : ' reversed');
+  cardEl.innerHTML = '<div style="font-size:32px;">🔮</div><div class="cap">'+ result.card.title + (result.upright? "（正位置）":"（逆位置）") +'</div>';
+  tarotTable.appendChild(cardEl);
 
-  window.beginFortune = function(){
-    ensureBGM();
-    const result = drawTarot();
-    tarotTable.innerHTML = "";
-    const cardEl = document.createElement('div');
-    cardEl.className = 'tarot-card' + (result.upright ? '' : ' reversed');
-    cardEl.innerHTML = '<div style="font-size:32px;">🔮</div><div class="cap">'+ result.card.title + (result.upright? "（正位置）":"（逆位置）") +'</div>';
-    tarotTable.appendChild(cardEl);
-
-    const lines = [
-      "とせいくんがタロットをシャッフル……",
-      "出たのは………… 「" + result.card.title + "」！",
-      result.upright ? "今日は正位置。良い流れを活かそう！" : "今日は逆位置。落ち着いて整えると好転するよ。",
-      ...(result.upright ? result.card.upright : result.card.reversed)
-    ];
-    document.getElementById('type-copy').textContent = "今日のキーワード： " + (result.upright ? "前向きな流れ" : "足元の整え直し");
-
-    const ul = document.getElementById('type-desc');
-    ul.innerHTML = "";
-    result.card.tips.forEach(function(t){
-      const li=document.createElement('li'); li.textContent = "🔸 " + t; ul.appendChild(li);
-    });
-
-    /* 🆕 ここで“タロット占いから出たアドバイス”の見出しを表示 */
-    showAdviceTitle();
-
-    show(screenDiagResult);
-    setTimeout(function(){ renderFortune(lines); }, 80);
-  };
-
-  // ====== クイズ（急変対応：3問） ======
-  const quiz = [
-    {
-      story: "📍状況：とせいくんが病院の中を歩いていると、目の前で患者さんの具合が悪くなりました。",
-      title: "謎1：さて、とせいくんはまず最初に何を観察したらいいでしょうか？",
-      choices: [
-        {label:"1）血圧", correct:false},
-        {label:"2）体温", correct:false},
-        {label:"3）呼吸", correct:true}
-      ],
-      explain: [
-        "脳や心臓に異常がみられると、正常な呼吸を保てなくなることがあります。命に関わる可能性があるため、まず“呼吸”を観察します。",
-        "正常な呼吸は成人で 16〜20 回/分の目安。10秒数えても呼吸が見られない場合は、すぐに応援を呼びましょう。",
-        "（この後、意識がなくなり脈も触れない → 大声で応援・ドクターコール・AED・救急カートを要請）"
-      ]
-    },
-    {
-      story: "🆘 とせいくんは応援を呼ぶことにしました。",
-      title: "謎2：要請する“ドクターコール”の番号は何番でしょう？",
-      choices: [
-        {label:"1）5151：患者支援センター説明室", correct:false},
-        {label:"2）6693：認定看護師のPHS", correct:false},
-        {label:"3）7171：救命救急センター受付", correct:true},
-        {label:"4）7711：7E病棟", correct:false}
-      ],
-      explain: [
-        "正解は 7171（救命救急センター受付）。至急連絡・支援要請の番号を覚えておこう！",
-        "ちなみに、院内のAEDは 25 台あります。AED到着までは胸骨圧迫（心臓マッサージ）を継続します。"
-      ]
-    },
-    {
-      story: "🚑 AEDが到着するまで、とせいくんは胸骨圧迫を行います。",
-      title: "謎3：胸骨圧迫（心臓マッサージ）は1分間にどのくらいの回数で行うのが正しい？",
-      choices: [
-        {label:"1）90〜100 回/分", correct:false},
-        {label:"2）100〜120 回/分", correct:true},
-        {label:"3）120〜140 回/分", correct:false}
-      ],
-      explain: [
-        "胸骨圧迫は一定のリズムで絶え間なく。胸部の真ん中に両手を置き、5〜6cmの深さで圧迫し、胸がしっかり戻るのを確認します。",
-        "目安になる曲：『アンパンマンマーチ』『ドラえもんのうた』『うさぎとかめ』などは 100 拍/分 程度で参考になります。",
-        "困った時は急性・重症患者看護専門看護師や救急看護認定看護師、集中ケア認定看護師に相談しよう。院内研修のICLSも定期的に受講が大切だね。"
-      ]
-    }
+  const lines = [
+    "とせいくんがタロットをシャッフル……",
+    "出たのは………… 「" + result.card.title + "」！",
+    result.upright ? "今日は正位置。良い流れを活かそう！" : "今日は逆位置。落ち着いて整えると好転するよ。",
+    ...(result.upright ? result.card.upright : result.card.reversed)
   ];
-  let quizIndex = 0;
-  const quizImages = []; // 必要なら ["q1.png","q2.png","q3.png"] のように追加
+  document.getElementById('type-copy').textContent = "今日のキーワード： " + (result.upright ? "前向きな流れ" : "足元の整え直し");
 
-  // ===== 画面・進行 =====
-  window.toQuiz = function(){
-    quizIndex = 0;
-    renderQuiz();
-    show(screenQuiz);
-  };
+  const ul = document.getElementById('type-desc');
+  ul.innerHTML = "";
+  result.card.tips.forEach(function(t){
+    const li=document.createElement('li'); li.textContent = "🔸 " + t; ul.appendChild(li);
+  });
 
-  function renderQuiz(){
+  showAdviceTitle();
+
+  show(screenDiagResult);
+  setTimeout(function(){ renderFortune(lines); }, 80);
+};
+
+const quiz = [
+  {
+    story: "📍状況：とせいくんが病院の中を歩いていると、目の前で患者さんの具合が悪くなりました。",
+    title: "謎1：さて、とせいくんはまず最初に何を観察したらいいでしょうか？",
+    choices: [
+      {label:"1）血圧", correct:false},
+      {label:"2）体温", correct:false},
+      {label:"3）呼吸", correct:true}
+    ],
+    explain: [
+      "脳や心臓に異常がみられると、正常な呼吸を保てなくなることがあります。命に関わる可能性があるため、まず“呼吸”を観察します。",
+      "正常な呼吸は成人で 16〜20 回/分の目安。10秒数えても呼吸が見られない場合は、すぐに応援を呼びましょう。",
+      "（この後、意識がなくなり脈も触れない → 大声で応援・ドクターコール・AED・救急カートを要請）"
+    ]
+  },
+  {
+    story: "🆘 とせいくんは応援を呼ぶことにしました。",
+    title: "謎2：要請する“ドクターコール”の番号は何番でしょう？",
+    choices: [
+      {label:"1）5151：患者支援センター説明室", correct:false},
+      {label:"2）6693：認定看護師のPHS", correct:false},
+      {label:"3）7171：救命救急センター受付", correct:true},
+      {label:"4）7711：7E病棟", correct:false}
+    ],
+    explain: [
+      "正解は 7171（救命救急センター受付）。至急連絡・支援要請の番号を覚えておこう！",
+      "ちなみに、院内のAEDは 25 台あります。AED到着までは胸骨圧迫（心臓マッサージ）を継続します。"
+    ]
+  },
+  {
+    story: "🚑 AEDが到着するまで、とせいくんは胸骨圧迫を行います。",
+    title: "謎3：胸骨圧迫（心臓マッサージ）は1分間にどのくらいの回数で行うのが正しい？",
+    choices: [
+      {label:"1）90〜100 回/分", correct:false},
+      {label:"2）100〜120 回/分", correct:true},
+      {label:"3）120〜140 回/分", correct:false}
+    ],
+    explain: [
+      "胸骨圧迫は一定のリズムで絶え間なく。胸部の真ん中に両手を置き、5〜6cmの深さで圧迫し、胸がしっかり戻るのを確認します。",
+      "目安になる曲：『アンパンマンマーチ』『ドラえもんのうた』『うさぎとかめ』などは 100 拍/分 程度で参考になります。",
+      "困った時は急性・重症患者看護専門看護師や救急看護認定看護師、集中ケア認定看護師に相談しよう。院内研修のICLSも定期的に受講が大切だね。"
+    ]
+  }
+];
+let quizIndex = 0;
+const quizImages = [];
+
+window.toQuiz = function(){
+  quizIndex = 0;
+  renderQuiz();
+  show(screenQuiz);
+};
+
+function renderQuiz(){
+  const q = quiz[quizIndex];
+  storyEl.innerHTML = q.story;
+  quizImgEl.src = quizImages[quizIndex] || "";
+  quizImgEl.alt = "第" + (quizIndex+1) + "問のイラスト";
+
+  qTitleEl.textContent = q.title;
+  choicesEl.innerHTML = ""; judgeEl.textContent = "";
+  explainEl.style.display = "none"; explainEl.innerHTML = "";
+  nextArea.style.display = "none";
+
+  q.choices.forEach(function(c){
+    const b = document.createElement('button');
+    b.className = 'choice-btn';
+    b.textContent = c.label;
+    b.onclick = function(){ judge(c.correct); };
+    choicesEl.appendChild(b);
+  });
+}
+
+function showStamp(){
+  stampEl.style.display = 'flex';
+  setTimeout(function(){ stampEl.style.display = 'none'; }, 700);
+}
+
+function judge(isCorrect){
+  if(isCorrect){
+    judgeEl.textContent = "正解！";
+    judgeEl.className = "result ok";
+
+    try{ seClick.pause(); seClick.currentTime = 0; }catch(e){}
+    try{
+      seCorrect.currentTime = 0;
+      setTimeout(function(){ try{ seCorrect.play(); }catch(e){} }, 30);
+    }catch(e){}
+
+    showStamp();
+
     const q = quiz[quizIndex];
-    storyEl.innerHTML = q.story;
-    quizImgEl.src = quizImages[quizIndex] || "";
-    quizImgEl.alt = "第" + (quizIndex+1) + "問のイラスト";
+    explainEl.innerHTML = "<strong>解説</strong><ul style='margin:6px 0 0; padding-left:18px;'>" +
+      q.explain.map(function(t){ return "<li>"+ t +"</li>"; }).join("") + "</ul>";
+    explainEl.style.display = "block";
+    nextArea.style.display = "block";
 
-    qTitleEl.textContent = q.title;
-    choicesEl.innerHTML = ""; judgeEl.textContent = "";
-    explainEl.style.display = "none"; explainEl.innerHTML = "";
-    nextArea.style.display = "none";
-
-    q.choices.forEach(function(c){
-      const b = document.createElement('button');
-      b.className = 'choice-btn';
-      b.textContent = c.label;
-      b.onclick = function(){ judge(c.correct); };
-      choicesEl.appendChild(b);
-    });
+  }else{
+    judgeEl.textContent = "残念！もう一度選んでみよう。";
+    judgeEl.className = "result ng";
   }
+}
 
-  function showStamp(){
-    stampEl.style.display = 'flex';
-    setTimeout(function(){ stampEl.style.display = 'none'; }, 700);
+window.goNext = function(){
+  quizIndex++;
+  if(quizIndex < quiz.length){
+    renderQuiz();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }else{
+    const nm = (nameEl.value || "名探偵").trim();
+    endingText.innerHTML = "<strong>"+ nm +"さん、ありがとう！</strong><br>急変時は“呼吸の観察→応援→ドクターコール（7171）→胸骨圧迫100〜120回/分”を意識していこう。";
+    show(screenEnding);
+    launchConfetti();
+    launchSparkles();
+    try{ seClear.currentTime = 0; seClear.play(); }catch(e){}
+    window.scrollTo({top:0, behavior:'smooth'});
   }
+};
 
-  function judge(isCorrect){
-    if(isCorrect){
-      judgeEl.textContent = "正解！";
-      judgeEl.className = "result ok";
-
-      try{ seClick.pause(); seClick.currentTime = 0; }catch(e){}
-      try{
-        seCorrect.currentTime = 0;
-        setTimeout(function(){ try{ seCorrect.play(); }catch(e){} }, 30);
-      }catch(e){}
-
-      showStamp();
-
-      const q = quiz[quizIndex];
-      explainEl.innerHTML = "<strong>解説</strong><ul style='margin:6px 0 0; padding-left:18px;'>" +
-        q.explain.map(function(t){ return "<li>"+ t +"</li>"; }).join("") + "</ul>";
-      explainEl.style.display = "block";
-      nextArea.style.display = "block";
-
-    }else{
-      judgeEl.textContent = "残念！もう一度選んでみよう。";
-      judgeEl.className = "result ng";
-    }
+function launchConfetti(){
+  confettiEl.innerHTML = "";
+  const colors = ["#ff7ac6","#ffd166","#7bdff2","#c3f0ca","#b5b0ff"];
+  for(let i=0;i<40;i++){
+    const s = document.createElement('span');
+    const size = 8 + Math.random()*10;
+    s.style.width = size + "px";
+    s.style.height = (size*1.6) + "px";
+    s.style.left = (Math.random()*100) + "%";
+    s.style.background = colors[Math.floor(Math.random()*colors.length)];
+    s.style.animationDelay = (Math.random()*0.8) + "s";
+    s.style.opacity = 0.8 + Math.random()*0.2;
+    confettiEl.appendChild(s);
   }
-
-  window.goNext = function(){
-    quizIndex++;
-    if(quizIndex < quiz.length){
-      renderQuiz();
-      window.scrollTo({top:0, behavior:'smooth'});
-    }else{
-      const nm = (nameEl.value || "名探偵").trim();
-      endingText.innerHTML = "<strong>"+ nm +"さん、ありがとう！</strong><br>急変時は“呼吸の観察→応援→ドクターコール（7171）→胸骨圧迫100〜120回/分”を意識していこう。";
-      show(screenEnding);
-      launchConfetti();
-      launchSparkles();
-      try{ seClear.currentTime = 0; seClear.play(); }catch(e){}
-      window.scrollTo({top:0, behavior:'smooth'});
-    }
-  };
-
-  // 紙吹雪＆キラキラ
-  function launchConfetti(){
-    confettiEl.innerHTML = "";
-    const colors = ["#ff7ac6","#ffd166","#7bdff2","#c3f0ca","#b5b0ff"];
-    for(let i=0;i<40;i++){
-      const s = document.createElement('span');
-      const size = 8 + Math.random()*10;
-      s.style.width = size + "px";
-      s.style.height = (size*1.6) + "px";
-      s.style.left = (Math.random()*100) + "%";
-      s.style.background = colors[Math.floor(Math.random()*colors.length)];
-      s.style.animationDelay = (Math.random()*0.8) + "s";
-      s.style.opacity = 0.8 + Math.random()*0.2;
-      confettiEl.appendChild(s);
-    }
+}
+function launchSparkles(){
+  sparklesEl.innerHTML = "";
+  for(let i=0;i<18;i++){
+    const sp = document.createElement('div');
+    sp.className = 'spark';
+    sp.style.left = (Math.random()*100) + "%";
+    sp.style.top  = (Math.random()*100) + "%";
+    sp.style.animationDelay = (Math.random()*1.2) + "s";
+    sparklesEl.appendChild(sp);
   }
-  function launchSparkles(){
-    sparklesEl.innerHTML = "";
-    for(let i=0;i<18;i++){
-      const sp = document.createElement('div');
-      sp.className = 'spark';
-      sp.style.left = (Math.random()*100) + "%";
-      sp.style.top  = (Math.random()*100) + "%";
-      sp.style.animationDelay = (Math.random()*1.2) + "s";
-      sparklesEl.appendChild(sp);
-    }
+}
+
+finishBtn.addEventListener('click', function(){
+  stopAllSounds();
+  document.getElementById('finish-message').style.display = 'block';
+  finishBtn.disabled = true;
+  finishBtn.textContent = '終了しました';
+});
+
+document.getElementById('begin-diag').addEventListener('click', function(){
+  if(!bgmStarted){
+    bgmStarted = true;
+    try{ bgm.volume = 0.8; bgm.play(); }catch(e){}
   }
-
-  // 終了ボタン
-  finishBtn.addEventListener('click', function(){
-    stopAllSounds();
-    finishMessage.style.display = 'block';
-    finishBtn.disabled = true;
-    finishBtn.textContent = '終了しました';
-  });
-
-  // BGM開始はユーザー操作後に（iOS対策）
-  document.getElementById('begin-diag').addEventListener('click', function(){
-    if(!bgmStarted){
-      bgmStarted = true;
-      try{ bgm.volume = 0.8; bgm.play(); }catch(e){}
-    }
-  });
+});
 </script>
 </body>
 </html>
