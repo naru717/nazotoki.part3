@@ -260,19 +260,22 @@
 <audio id="seClear" src="seikou.mp3" preload="auto"></audio>
 
 <script>
-const GOOGLE_FORM_ACTION = "https://docs.google.com/forms/d/e//formResponse";
-const ENTRY_NAME = "entry.6";
-const ENTRY_DEPT = "entry.2";
-const ENTRY_JOB  = "entry.6";
+const GOOGLE_FORM_ACTION = "https://docs.google.com/forms/d/e/1FAIpQLSfr2DwGNCLNYa5DGbQlTUcKPze171bdRq8TiTnBHqNcUWmakQ/formResponse";
+
+const ENTRY_NAME = "entry.671897270";
+const ENTRY_DEPT = "entry.278938549";
+const ENTRY_JOB  = "entry.691760735";
 
 function sendToGoogleForm({ name, dept, job }) {
-  try {
-    const fd = new FormData();
-    fd.append(ENTRY_NAME, name || "");
-    fd.append(ENTRY_DEPT, dept || "");
-    fd.append(ENTRY_JOB,  job  || "");
-    fetch(GOOGLE_FORM_ACTION, { method: "POST", body: fd, mode: "no-cors" });
-  } catch (e) {}
+  const fd = new FormData();
+  fd.append(ENTRY_NAME, name);
+  fd.append(ENTRY_DEPT, dept);
+  fd.append(ENTRY_JOB, job);
+  fetch(GOOGLE_FORM_ACTION, {
+    method: "POST",
+    body: fd,
+    mode: "no-cors"
+  });
 }
 
 const nameEl  = document.getElementById('name');
